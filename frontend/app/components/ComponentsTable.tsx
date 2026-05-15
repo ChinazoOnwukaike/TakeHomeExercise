@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import type { ComponentSummary, ComponentDetail, BlockSummary } from "@/lib/types";
+import type {
+  ComponentSummary,
+  ComponentDetail,
+  BlockSummary,
+} from "@/lib/types";
 import { fetchComponent } from "@/lib/api";
 import MaterialRow from "./MaterialRow";
 
@@ -9,19 +13,25 @@ interface Props {
   components: ComponentSummary[];
 }
 
-export default function ComponentsTable({ components }: Props) {
+const ComponentsTable = ({ components }: Props) => {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [details, setDetails] = useState<Record<string, ComponentDetail>>({});
   const [footprints, setFootprints] = useState<Record<string, number>>(() =>
     Object.fromEntries(
-      components.filter((c) => c.total_footprint !== null).map((c) => [c.component_id, c.total_footprint!])
-    )
+      components
+        .filter((c) => c.total_footprint !== null)
+        .map((c) => [c.component_id, c.total_footprint!]),
+    ),
   );
   const [loading, setLoading] = useState<Set<string>>(new Set());
 
   async function toggleExpand(id: string) {
     if (expanded.has(id)) {
-      setExpanded((prev) => { const s = new Set(prev); s.delete(id); return s; });
+      setExpanded((prev) => {
+        const s = new Set(prev);
+        s.delete(id);
+        return s;
+      });
       return;
     }
 
@@ -33,7 +43,11 @@ export default function ComponentsTable({ components }: Props) {
         const detail = await fetchComponent(id);
         setDetails((prev) => ({ ...prev, [id]: detail }));
       } finally {
-        setLoading((prev) => { const s = new Set(prev); s.delete(id); return s; });
+        setLoading((prev) => {
+          const s = new Set(prev);
+          s.delete(id);
+          return s;
+        });
       }
     }
   }
@@ -42,7 +56,7 @@ export default function ComponentsTable({ components }: Props) {
     (componentId: string) => (_updated: BlockSummary, newFootprint: number) => {
       setFootprints((prev) => ({ ...prev, [componentId]: newFootprint }));
     },
-    []
+    [],
   );
 
   return (
@@ -56,7 +70,9 @@ export default function ComponentsTable({ components }: Props) {
             <th className="py-3.5 pr-6 text-right font-semibold text-white w-1/6">
               Weight / CO₂e value
             </th>
-            <th className="py-3.5 text-center font-semibold text-white w-1/6">Source</th>
+            <th className="py-3.5 text-center font-semibold text-white w-1/6">
+              Source
+            </th>
             <th className="pr-6 py-3.5 w-1/6" />
           </tr>
         </thead>
@@ -74,9 +90,13 @@ export default function ComponentsTable({ components }: Props) {
                   onClick={() => toggleExpand(c.component_id)}
                 >
                   <td className="pl-6 py-3.5 font-semibold text-brand-dark">
-                    <span className="mr-2 text-brand-green">{isExpanded ? "▾" : "▸"}</span>
+                    <span className="mr-2 text-brand-green">
+                      {isExpanded ? "▾" : "▸"}
+                    </span>
                     {c.component_name}
-                    <span className="ml-2 text-xs font-normal text-brand-muted">{c.sku}</span>
+                    <span className="ml-2 text-xs font-normal text-brand-muted">
+                      {c.sku}
+                    </span>
                   </td>
                   <td className="py-3.5 pr-6 text-right font-mono font-semibold text-brand-dark">
                     {displayFootprint !== undefined
@@ -91,7 +111,10 @@ export default function ComponentsTable({ components }: Props) {
                   <>
                     {isLoading && (
                       <tr key={`${c.component_id}-loading`}>
-                        <td colSpan={4} className="pl-12 py-2 text-sm text-brand-muted italic">
+                        <td
+                          colSpan={4}
+                          className="pl-12 py-2 text-sm text-brand-muted italic"
+                        >
                           Loading…
                         </td>
                       </tr>
@@ -113,4 +136,5 @@ export default function ComponentsTable({ components }: Props) {
       </table>
     </div>
   );
-}
+};
+export default ComponentsTable;
