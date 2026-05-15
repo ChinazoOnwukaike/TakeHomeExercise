@@ -1,0 +1,8 @@
+component_id,material,supplier,weight,unit
+c-001,steel,AcmeSteel,12.5,kg
+c-001,copper,GlobalWire,2.0,kg
+c-001,plastic,PolymerCo,3.5,kg
+c-001,paint,EcoCoat,0.4,kg
+c-002,aluminum,AlphaAl,8.0,kg
+c-002,steel,AcmeSteel,1.5,kg
+c-003,steel,,2.5,kg
