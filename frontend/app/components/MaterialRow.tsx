@@ -30,6 +30,7 @@ export default function MaterialRow({ material, onBlockUpdated }: Props) {
         </td>
         <td />
         <td />
+        <td />
       </tr>
 
       {expanded &&

@@ -23,6 +23,7 @@ export default function BlockRow({ block, onBlockUpdated }: Props) {
     <>
       <tr className="bg-brand-surface border-t border-gray-100">
         <td className="pl-24 py-2 text-sm text-brand-dark">{current.block_name}</td>
+        <td />
         <td className="py-2 text-sm text-right font-mono text-brand-dark">
           {current.active_co2e.toFixed(2)}
         </td>

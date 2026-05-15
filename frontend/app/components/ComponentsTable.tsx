@@ -64,16 +64,19 @@ const ComponentsTable = ({ components }: Props) => {
       <table className="min-w-full divide-y divide-gray-200 text-sm">
         <thead className="bg-brand-dark">
           <tr>
-            <th className="pl-6 py-3.5 text-left font-semibold text-white w-1/2">
+            <th className="pl-6 py-3.5 text-left font-semibold text-white w-[45%]">
               Component / Material / Block
             </th>
-            <th className="py-3.5 pr-6 text-right font-semibold text-white w-1/6">
-              Weight / CO₂e value
+            <th className="py-3.5 text-right font-semibold text-white w-[10%]">
+              Weight
             </th>
-            <th className="py-3.5 text-center font-semibold text-white w-1/6">
+            <th className="py-3.5 text-right font-semibold text-white w-[15%]">
+              CO₂e (kg)
+            </th>
+            <th className="py-3.5 text-center font-semibold text-white w-[15%]">
               Source
             </th>
-            <th className="pr-6 py-3.5 w-1/6" />
+            <th className="pr-6 py-3.5 w-[15%]" />
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">
@@ -93,12 +96,13 @@ const ComponentsTable = ({ components }: Props) => {
                     <span className="mr-2 text-brand-green">
                       {isExpanded ? "▾" : "▸"}
                     </span>
-                    {c.component_name}
-                    <span className="ml-2 text-xs font-normal text-brand-muted">
+                    <span className="mr-2 text-xs font-normal text-brand-muted">
                       {c.sku}
                     </span>
+                    {c.component_name}
                   </td>
-                  <td className="py-3.5 pr-6 text-right font-mono font-semibold text-brand-dark">
+                  <td />
+                  <td className="py-3.5 text-right font-mono font-semibold text-brand-dark">
                     {displayFootprint !== undefined
                       ? `${displayFootprint.toFixed(3)} kg CO₂e`
                       : "—"}
@@ -112,7 +116,7 @@ const ComponentsTable = ({ components }: Props) => {
                     {isLoading && (
                       <tr key={`${c.component_id}-loading`}>
                         <td
-                          colSpan={4}
+                          colSpan={5}
                           className="pl-12 py-2 text-sm text-brand-muted italic"
                         >
                           Loading…
