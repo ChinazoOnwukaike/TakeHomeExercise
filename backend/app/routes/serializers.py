@@ -1,6 +1,6 @@
 from ..models import Block, Material
 
-
+# Change from the SQLAlchemy model to py dicts for Flask JSON
 def serialize_block(b: Block) -> dict:
     active = b.supplier_reported_co2e_value if b.supplier_reported_co2e_value is not None else b.co2e_value
     return {
