@@ -24,6 +24,7 @@ const ComponentsTable = ({ components }: Props) => {
     ),
   );
   const [loading, setLoading] = useState<Set<string>>(new Set());
+  const [search, setSearch] = useState("");
 
   async function toggleExpand(id: string) {
     if (expanded.has(id)) {
@@ -59,8 +60,26 @@ const ComponentsTable = ({ components }: Props) => {
     [],
   );
 
+  const filtered = components.filter((c) => {
+    const term = search.toLowerCase();
+    return (
+      c.component_name.toLowerCase().includes(term) ||
+      c.sku.toLowerCase().includes(term)
+    );
+  });
+
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+    <div>
+      <div className="mb-4 flex justify-end">
+        <input
+          type="text"
+          placeholder="Search components…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-72 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green"
+        />
+      </div>
+      <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
       <table className="min-w-full divide-y divide-gray-200 text-sm">
         <thead className="bg-brand-dark">
           <tr>
@@ -80,7 +99,7 @@ const ComponentsTable = ({ components }: Props) => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">
-          {components.map((c) => {
+          {filtered.map((c) => {
             const isExpanded = expanded.has(c.component_id);
             const isLoading = loading.has(c.component_id);
             const detail = details[c.component_id];
@@ -147,6 +166,7 @@ const ComponentsTable = ({ components }: Props) => {
           })}
         </tbody>
       </table>
+    </div>
     </div>
   );
 };
