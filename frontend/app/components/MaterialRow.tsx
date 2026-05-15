@@ -15,18 +15,17 @@ export default function MaterialRow({ material, onBlockUpdated }: Props) {
   return (
     <>
       <tr
-        className="border-t border-gray-100 cursor-pointer hover:bg-blue-50/40"
+        className="border-t border-gray-100 cursor-pointer hover:bg-brand-surface"
         onClick={() => setExpanded((v) => !v)}
       >
-        {/* indent spacer */}
-        <td className="pl-12 py-2.5 text-sm font-medium text-gray-700">
-          <span className="mr-1.5 text-gray-400">{expanded ? "▾" : "▸"}</span>
+        <td className="pl-12 py-2.5 text-sm font-medium text-brand-dark">
+          <span className="mr-1.5 text-brand-green">{expanded ? "▾" : "▸"}</span>
           {material.material_name}
           {material.supplier_name && (
-            <span className="ml-2 text-xs text-gray-400">({material.supplier_name})</span>
+            <span className="ml-2 text-xs text-brand-muted">({material.supplier_name})</span>
           )}
         </td>
-        <td className="py-2.5 text-sm text-right font-mono text-gray-600">
+        <td className="py-2.5 text-sm text-right font-mono text-brand-muted">
           {material.weight.toFixed(2)} kg
         </td>
         <td />

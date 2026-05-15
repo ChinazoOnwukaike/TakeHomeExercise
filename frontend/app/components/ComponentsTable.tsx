@@ -48,15 +48,15 @@ export default function ComponentsTable({ components }: Props) {
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
       <table className="min-w-full divide-y divide-gray-200 text-sm">
-        <thead className="bg-gray-50">
+        <thead className="bg-brand-dark">
           <tr>
-            <th className="pl-4 py-3 text-left font-semibold text-gray-700 w-1/2">
+            <th className="pl-4 py-3 text-left font-semibold text-white w-1/2">
               Component / Material / Block
             </th>
-            <th className="py-3 text-right font-semibold text-gray-700 w-1/6">
+            <th className="py-3 text-right font-semibold text-white w-1/6">
               Weight / CO₂e value
             </th>
-            <th className="py-3 text-center font-semibold text-gray-700 w-1/6">Source</th>
+            <th className="py-3 text-center font-semibold text-white w-1/6">Source</th>
             <th className="pr-4 py-3 w-1/6" />
           </tr>
         </thead>
@@ -70,15 +70,15 @@ export default function ComponentsTable({ components }: Props) {
             return (
               <React.Fragment key={c.component_id}>
                 <tr
-                  className="cursor-pointer hover:bg-blue-50/60"
+                  className="cursor-pointer hover:bg-brand-surface"
                   onClick={() => toggleExpand(c.component_id)}
                 >
-                  <td className="pl-4 py-3 font-semibold text-gray-900">
-                    <span className="mr-2 text-gray-400">{isExpanded ? "▾" : "▸"}</span>
+                  <td className="pl-4 py-3 font-semibold text-brand-dark">
+                    <span className="mr-2 text-brand-green">{isExpanded ? "▾" : "▸"}</span>
                     {c.component_name}
-                    <span className="ml-2 text-xs font-normal text-gray-400">{c.sku}</span>
+                    <span className="ml-2 text-xs font-normal text-brand-muted">{c.sku}</span>
                   </td>
-                  <td className="py-3 text-right font-mono font-semibold text-gray-900">
+                  <td className="py-3 text-right font-mono font-semibold text-brand-dark">
                     {displayFootprint !== undefined
                       ? `${displayFootprint.toFixed(3)} kg CO₂e`
                       : "—"}
@@ -91,7 +91,7 @@ export default function ComponentsTable({ components }: Props) {
                   <>
                     {isLoading && (
                       <tr key={`${c.component_id}-loading`}>
-                        <td colSpan={4} className="pl-12 py-2 text-sm text-gray-400 italic">
+                        <td colSpan={4} className="pl-12 py-2 text-sm text-brand-muted italic">
                           Loading…
                         </td>
                       </tr>

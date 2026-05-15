@@ -47,20 +47,20 @@ export default function EditBlockDialog({ block, onSaved, onClose }: Props) {
         open
         className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
       >
-        <h2 className="mb-1 text-lg font-semibold text-gray-900">Edit block</h2>
-        <p className="mb-4 text-sm text-gray-500">{block.block_name}</p>
+        <h2 className="mb-1 text-lg font-semibold text-brand-dark">Edit block</h2>
+        <p className="mb-4 text-sm text-brand-muted">{block.block_name}</p>
 
-        <div className="mb-3 rounded-md bg-gray-50 px-4 py-3 text-sm">
-          <span className="text-gray-500">Industry default: </span>
-          <span className="font-mono font-medium text-gray-800">
+        <div className="mb-3 rounded-md bg-brand-surface px-4 py-3 text-sm">
+          <span className="text-brand-muted">Industry default: </span>
+          <span className="font-mono font-medium text-brand-dark">
             {block.co2e_value.toFixed(2)} kg CO₂e/unit
           </span>
         </div>
 
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-brand-dark mb-1">
           Supplier-reported value (kg CO₂e/unit)
         </label>
-        <p className="text-xs text-gray-400 mb-2">
+        <p className="text-xs text-brand-muted mb-2">
           Leave blank to fall back to the industry default.
         </p>
         <input
@@ -70,7 +70,7 @@ export default function EditBlockDialog({ block, onSaved, onClose }: Props) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={`industry default: ${block.co2e_value.toFixed(2)}`}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-green"
         />
 
         {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
@@ -78,14 +78,14 @@ export default function EditBlockDialog({ block, onSaved, onClose }: Props) {
         <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            className="rounded-md border border-gray-200 px-4 py-2 text-sm text-brand-dark hover:bg-brand-surface"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-md bg-brand-dark px-4 py-2 text-sm text-white hover:opacity-90 disabled:opacity-50"
           >
             {saving ? "Saving…" : "Save"}
           </button>
