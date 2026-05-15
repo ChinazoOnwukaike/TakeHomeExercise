@@ -11,22 +11,24 @@ interface Props {
   onClose: () => void;
 }
 
-export default function EditBlockDialog({ block, onSaved, onClose }: Props) {
+const EditBlockDialog = ({ block, onSaved, onClose }: Props) => {
   const [value, setValue] = useState<string>(
     block.supplier_reported_co2e_value !== null
       ? String(block.supplier_reported_co2e_value)
-      : ""
+      : "",
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSave() {
+  const handleSave = async () => {
     setSaving(true);
     setError(null);
     try {
       const parsed = value.trim() === "" ? null : parseFloat(value);
       if (parsed !== null && isNaN(parsed)) {
-        setError("Enter a valid number or leave blank to use industry default.");
+        setError(
+          "Enter a valid number or leave blank to use industry default.",
+        );
         return;
       }
       const result = await patchBlock(block.block_id, parsed);
@@ -36,7 +38,7 @@ export default function EditBlockDialog({ block, onSaved, onClose }: Props) {
     } finally {
       setSaving(false);
     }
-  }
+  };
 
   return createPortal(
     <div
@@ -47,7 +49,9 @@ export default function EditBlockDialog({ block, onSaved, onClose }: Props) {
         open
         className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
       >
-        <h2 className="mb-1 text-lg font-semibold text-brand-dark">Edit block</h2>
+        <h2 className="mb-1 text-lg font-semibold text-brand-dark">
+          Edit block
+        </h2>
         <p className="mb-4 text-sm text-brand-muted">{block.block_name}</p>
 
         <div className="mb-3 rounded-md bg-brand-surface px-4 py-3 text-sm">
@@ -92,6 +96,8 @@ export default function EditBlockDialog({ block, onSaved, onClose }: Props) {
         </div>
       </dialog>
     </div>,
-    document.body
+    document.body,
   );
-}
+};
+
+export default EditBlockDialog;

@@ -9,7 +9,7 @@ interface Props {
   onBlockUpdated: (updated: BlockSummary, newFootprint: number) => void;
 }
 
-export default function BlockRow({ block, onBlockUpdated }: Props) {
+const BlockRow = ({ block, onBlockUpdated }: Props) => {
   const [editing, setEditing] = useState(false);
   const [current, setCurrent] = useState(block);
 
@@ -53,4 +53,6 @@ export default function BlockRow({ block, onBlockUpdated }: Props) {
       )}
     </>
   );
-}
+};
+
+export default BlockRow;

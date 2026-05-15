@@ -93,13 +93,22 @@ const ComponentsTable = ({ components }: Props) => {
                   onClick={() => toggleExpand(c.component_id)}
                 >
                   <td className="pl-6 py-3.5 font-semibold text-brand-dark">
-                    <span className="mr-2 text-brand-green">
-                      {isExpanded ? "▾" : "▸"}
-                    </span>
-                    <span className="mr-2 text-xs font-normal text-brand-muted">
-                      {c.sku}
-                    </span>
-                    {c.component_name}
+                    <div className="flex items-start gap-2">
+                      <span className="text-brand-green flex-shrink-0">
+                        {isExpanded ? "▾" : "▸"}
+                      </span>
+                      <span className="text-xs font-normal text-brand-muted flex-shrink-0 mt-0.5">
+                        {c.sku}
+                      </span>
+                      <div>
+                        {c.component_name}
+                        {c.description && (
+                          <p className="mt-0.5 text-xs font-normal text-brand-muted">
+                            {c.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </td>
                   <td />
                   <td className="py-3.5 text-right font-mono font-semibold text-brand-dark">

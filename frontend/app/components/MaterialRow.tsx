@@ -9,7 +9,7 @@ interface Props {
   onBlockUpdated: (updated: BlockSummary, newFootprint: number) => void;
 }
 
-export default function MaterialRow({ material, onBlockUpdated }: Props) {
+const MaterialRow = ({ material, onBlockUpdated }: Props) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -43,4 +43,6 @@ export default function MaterialRow({ material, onBlockUpdated }: Props) {
         ))}
     </>
   );
-}
+};
+
+export default MaterialRow;
