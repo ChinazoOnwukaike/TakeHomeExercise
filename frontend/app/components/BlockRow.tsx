@@ -27,15 +27,11 @@ export default function BlockRow({ block, onBlockUpdated }: Props) {
           {current.active_co2e.toFixed(2)}
         </td>
         <td className="py-2 text-sm text-center">
-          <span
-            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-              current.source === "supplier-reported"
-                ? "bg-brand-green/20 text-brand-dark"
-                : "bg-gray-200 text-brand-muted"
-            }`}
-          >
-            {current.source}
-          </span>
+          {current.source === "supplier-reported" && (
+            <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-brand-green/20 text-brand-dark">
+              supplier-reported
+            </span>
+          )}
         </td>
         <td className="py-2 pr-4 text-right">
           <button

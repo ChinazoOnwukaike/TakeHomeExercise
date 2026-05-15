@@ -39,7 +39,11 @@ def _serialize_material(mat: Material) -> dict:
         "material_name": mat.material_name,
         "weight": mat.weight / 100,
         "supplier_name": supplier_name,
-        "blocks": [_serialize_block(b) for b in mat.blocks],
+        "blocks": sorted(
+            [_serialize_block(b) for b in mat.blocks],
+            key=lambda x: x["active_co2e"],
+            reverse=True,
+        ),
     }
 
 

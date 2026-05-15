@@ -50,14 +50,14 @@ export default function ComponentsTable({ components }: Props) {
       <table className="min-w-full divide-y divide-gray-200 text-sm">
         <thead className="bg-brand-dark">
           <tr>
-            <th className="pl-4 py-3 text-left font-semibold text-white w-1/2">
+            <th className="pl-6 py-3.5 text-left font-semibold text-white w-1/2">
               Component / Material / Block
             </th>
-            <th className="py-3 text-right font-semibold text-white w-1/6">
+            <th className="py-3.5 pr-6 text-right font-semibold text-white w-1/6">
               Weight / CO₂e value
             </th>
-            <th className="py-3 text-center font-semibold text-white w-1/6">Source</th>
-            <th className="pr-4 py-3 w-1/6" />
+            <th className="py-3.5 text-center font-semibold text-white w-1/6">Source</th>
+            <th className="pr-6 py-3.5 w-1/6" />
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">
@@ -73,12 +73,12 @@ export default function ComponentsTable({ components }: Props) {
                   className="cursor-pointer hover:bg-brand-surface"
                   onClick={() => toggleExpand(c.component_id)}
                 >
-                  <td className="pl-4 py-3 font-semibold text-brand-dark">
+                  <td className="pl-6 py-3.5 font-semibold text-brand-dark">
                     <span className="mr-2 text-brand-green">{isExpanded ? "▾" : "▸"}</span>
                     {c.component_name}
                     <span className="ml-2 text-xs font-normal text-brand-muted">{c.sku}</span>
                   </td>
-                  <td className="py-3 text-right font-mono font-semibold text-brand-dark">
+                  <td className="py-3.5 pr-6 text-right font-mono font-semibold text-brand-dark">
                     {displayFootprint !== undefined
                       ? `${displayFootprint.toFixed(3)} kg CO₂e`
                       : "—"}
