@@ -61,10 +61,10 @@ const ComponentsTable = ({ components }: Props) => {
   );
 
   const filtered = components.filter((c) => {
-    const term = search.toLowerCase();
+    const term = search.toLowerCase().replace(/-/g, "");
     return (
       c.component_name.toLowerCase().includes(term) ||
-      c.sku.toLowerCase().includes(term)
+      c.sku.toLowerCase().replace(/-/g, "").includes(term)
     );
   });
 

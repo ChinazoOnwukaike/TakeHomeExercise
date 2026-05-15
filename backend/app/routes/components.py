@@ -6,7 +6,7 @@ from .serializers import serialize_material
 bp = Blueprint("components", __name__, url_prefix="/api/components")
 
 
-@bp.get("/")
+@bp.get("/", strict_slashes=False)
 def list_components():
     components = Component.query.order_by(Component.sku).all()
     return jsonify([
