@@ -73,6 +73,8 @@ PostgreSQL (Supabase)
 
 The Next.js page renders the component list server-side. Row expansion and block editing are client-side interactions with no full page reloads. After a block edit the Flask API recomputes `total_footprint` on the component row and returns the new value so the UI can update in place. A client-side search bar filters components by name or SKU (hyphen-tolerant, so `c001` matches `c-001`).
 
+**What is editable and why:** The editable field is the supplier-reported CO₂e value on each block. This is the value suppliers submit based on their actual production processes, which overrides the industry default — editing it is the most meaningful lever because it reflects how footprints change in practice: as suppliers report more accurate data, the rollup updates automatically through the hierarchy.
+
 **Backend structure:**
 - `app/models/` — one file per model (`supplier.py`, `component.py`, `material.py`, `block.py`); `__init__.py` re-exports all four so import paths are stable.
 - `app/routes/` — one Flask Blueprint per resource (`components.py`, `blocks.py`); serialization logic lives in `serializers.py`; `__init__.py` exposes `register_routes(app)`. `app/__init__.py` only handles Flask initialization.
@@ -85,38 +87,29 @@ The Next.js page renders the component list server-side. Row expansion and block
 
 ## Trade-offs
 
-### 1. Integer storage for co2e and weight values
-All emission factors and material weights are stored as integers scaled by 100 (e.g. `0.80 kg CO₂e` → `80`, `12.5 kg` → `1250`). This avoids floating-point rounding drift that would compound across summations. The backend divides by 100 when computing footprints, and the API returns human-readable floats. The trade-off is that the column type is slightly surprising to a reader who doesn't know the convention, and any import tooling must apply the scaling.
-
-### 2. Rollup-on-write vs. rollup-on-read
+### 1. Rollup-on-write vs. rollup-on-read
 `total_footprint` is computed and stored on the `components` row whenever a block is edited (rollup-on-write), rather than being computed at query time (rollup-on-read). With three components and small block counts, either would be fine. I chose rollup-on-write because: (a) reads vastly outnumber writes in a production dashboard; (b) it keeps the GET `/components` response fast and simple; (c) it makes the stored value auditable. The downside is that the stored value can drift if blocks are bulk-edited outside the API, but that's acceptable for this scope.
 
-### 3. Supplier-reported vs. industry-default within a single block row
-The CSV ships two rows per (material, block_name): one with a supplier and one without. I merged these into a single `blocks` table row with `co2e_value` (industry default) and `supplier_reported_co2e_value` (nullable). This mirrors the stated domain model — "supplier data overrides the default" — and makes the active value trivial to compute (`COALESCE(supplier_reported_co2e_value, co2e_value)`). The alternative (separate rows with a `source` flag) would require a join or subquery to resolve the active value.
-
-### 4. Two-column split for Weight and CO₂e
-Weight and CO₂e are separate columns in the table rather than sharing one. Weight only ever appears on material rows; CO₂e only on component and block rows. A single shared column with an ambiguous header ("Weight / CO₂e value") forces the reader to infer which is which from context. Splitting makes each column unambiguous — empty cells in the non-applicable rows are clearer than overloading one column with two different meanings.
-
-### 5. SQLAlchemy lazy loading on the `materials` relationship
+### 2. SQLAlchemy lazy loading on the `materials` relationship
 `Component` has a `materials` relationship which SQLAlchemy only queries when accessed in code. In the `GET /api/components` list endpoint, `c.materials` is never accessed so no materials are loaded. In `GET /api/components/<id>`, materials are always accessed to build the nested response. In the current codebase this gives no practical efficiency advantage over an explicit filter query — it is a convenience rather than a performance optimization, since there is no conditional logic that would skip materials.
 
-### 6. Flask-Migrate for schema management
+### 3. Flask-Migrate for schema management
 Schema changes are managed through Alembic migrations via Flask-Migrate rather than `db.create_all()`. `db.create_all()` works for a fresh database but can't evolve an existing schema — adding a column to a model won't add it to a live table. Flask-Migrate generates versioned migration files that live in git alongside the code. Any schema change produces a new migration file; `make migrate` applies all pending migrations safely against a live database without dropping data.
 
-### 7. `create_app(test_config)` for test isolation
-The Flask app factory accepts an optional `test_config` dict that overrides config before `db.init_app()` is called. This lets tests swap in `sqlite:///:memory:` without touching environment variables or the production config path. Without this pattern, the Postgres `DATABASE_URL` from `.env` would be loaded before the test could override it, causing tests to hit the real database.
 
 **With more time I would:**
+- Add a Postgres trigger (deployed via a Flask-Migrate migration) that recomputes `total_footprint` on any `INSERT`, `UPDATE`, or `DELETE` to `blocks` — eliminating drift regardless of how the write originated, rather than relying on the API call path to always fire the recompute
+- Switch the `materials` and `blocks` SQLAlchemy relationships to `selectinload` (eager loading) to prevent N+1 queries as the dataset grows — currently `GET /api/components/<id>` fires one query per material to fetch its blocks
 - Add optimistic UI updates on block edit (instead of waiting for the API round-trip)
 - Add an undo/reset button to revert a block to industry default from the UI (currently requires clearing the supplier field to blank)
 - Make `seed.py` idempotent — currently it re-inserts all data on every run, which would fail with unique constraint violations against a non-empty database. A guard checking `Component.query.count() > 0` before inserting would prevent accidental re-seeding of a live database
-- Add frontend tests (Jest + React Testing Library) covering the search filter, block edit dialog, and table expansion
+- Add frontend tests (Jest + React Testing Library) covering the search filter, block row rendering, and table expansion
 
 ---
 
 ## AI usage notes
 
-This project was built collaboratively with Claude Code.
+This project (and README) was built collaboratively with Claude Code. Claude wrote the implementation throughout — routes, serializers, frontend components, and tests — working from my directions on structure and decisions. My role was specifying requirements, overriding suggestions I disagreed with, and steering the architecture.
 
 - **Schema design**: I specified the schema; Claude confirmed the seed-data mapping and caught that blocks.csv ships separate rows for supplier-reported and industry-default values that need to be merged into one DB row.
 - **What Claude suggested that I overrode**:
