@@ -76,7 +76,8 @@ make test           # backend
 make test-frontend  # frontend
 ```
 
-Runs the backend pytest suite (27 tests) against an in-memory SQLite database — no Supabase connection required. Coverage:
+Runs the backend pytest suite (30 tests) against an in-memory SQLite database — no Supabase connection required. Coverage:
+- **Footprint accuracy** — full dataset for all three components asserting exact expected totals (41.525, 68.375, 5.25 kg CO₂e)
 - **Serializers** — `serialize_block` and `serialize_material`: source field, active co2e selection, value scaling, sort order, supplier name
 - **Recompute logic** — `_recompute_component`: supplier-reported values, fallback to industry default, partial supplier data
 - **Routes** — all three endpoints: response shapes, 404/400 error cases, block update and footprint recompute
