@@ -9,7 +9,7 @@ from app.models import Supplier, Component, Material, Block
 
 @pytest.fixture(scope="session")
 def app():
-    app = create_app({
+    app = create_app(test_config={
         "TESTING": True,
         "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
     })
