@@ -1,10 +1,13 @@
 import os
 from flask import Flask
 from flask_cors import CORS
+from flask_migrate import Migrate
 from dotenv import load_dotenv
 from .db import db
 
 load_dotenv()
+
+migrate = Migrate()
 
 
 def create_app(test_config: dict = None):
@@ -18,6 +21,7 @@ def create_app(test_config: dict = None):
         app.config.update(test_config)
 
     db.init_app(app)
+    migrate.init_app(app, db)
 
     from .routes import register_routes
     register_routes(app)

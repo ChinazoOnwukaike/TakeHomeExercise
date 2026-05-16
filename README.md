@@ -4,8 +4,10 @@
 
 ```bash
 echo "DATABASE_URL=postgresql://postgres:2IgN3Vi4p1YpBAZC@db.xxzzewusiglujvqlpzpi.supabase.co:5432/postgres" > backend/.env
+echo "FLASK_APP=run.py" >> backend/.env
 echo "NEXT_PUBLIC_API_URL=http://localhost:5000" > frontend/.env.local
 make install
+make migrate
 make seed
 make dev
 ```
@@ -18,10 +20,11 @@ Both servers start in one terminal with color-coded output. Ctrl+C stops both. O
 **Backend:**
 ```bash
 cd backend
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-python seed.py
-python run.py
+python3 -m venv venv
+./venv/bin/pip install -r requirements.txt
+FLASK_APP=run.py ./venv/bin/flask db upgrade
+./venv/bin/python seed.py
+./venv/bin/python run.py
 ```
 
 **Frontend:**
@@ -31,6 +34,8 @@ npm install
 npm run dev
 ```
 </details>
+
+> **Port conflicts:** `make dev` will fail if ports 3000 or 5000 are already in use. Run `lsof -ti:3000 | xargs kill -9` or `lsof -ti:5000 | xargs kill -9` to free them before retrying.
 
 ---
 
@@ -66,7 +71,7 @@ PostgreSQL (Supabase)
     tables: suppliers, components, materials, blocks
 ```
 
-The Next.js page renders the component list server-side. Row expansion and block editing are client-side interactions with no full page reloads. After a block edit the Flask API recomputes `total_footprint` on the component row and returns the new value so the UI can update in place.
+The Next.js page renders the component list server-side. Row expansion and block editing are client-side interactions with no full page reloads. After a block edit the Flask API recomputes `total_footprint` on the component row and returns the new value so the UI can update in place. A client-side search bar filters components by name or SKU (hyphen-tolerant, so `c001` matches `c-001`).
 
 **Backend structure:**
 - `app/models/` — one file per model (`supplier.py`, `component.py`, `material.py`, `block.py`); `__init__.py` re-exports all four so import paths are stable.
@@ -95,13 +100,17 @@ Weight and CO₂e are separate columns in the table rather than sharing one. Wei
 ### 5. SQLAlchemy lazy loading on the `materials` relationship
 `Component` has a `materials` relationship which SQLAlchemy only queries when accessed in code. In the `GET /api/components` list endpoint, `c.materials` is never accessed so no materials are loaded. In `GET /api/components/<id>`, materials are always accessed to build the nested response. In the current codebase this gives no practical efficiency advantage over an explicit filter query — it is a convenience rather than a performance optimization, since there is no conditional logic that would skip materials.
 
-### 6. `create_app(test_config)` for test isolation
+### 6. Flask-Migrate for schema management
+Schema changes are managed through Alembic migrations via Flask-Migrate rather than `db.create_all()`. `db.create_all()` works for a fresh database but can't evolve an existing schema — adding a column to a model won't add it to a live table. Flask-Migrate generates versioned migration files that live in git alongside the code. Any schema change produces a new migration file; `make migrate` applies all pending migrations safely against a live database without dropping data.
+
+### 7. `create_app(test_config)` for test isolation
 The Flask app factory accepts an optional `test_config` dict that overrides config before `db.init_app()` is called. This lets tests swap in `sqlite:///:memory:` without touching environment variables or the production config path. Without this pattern, the Postgres `DATABASE_URL` from `.env` would be loaded before the test could override it, causing tests to hit the real database.
 
 **With more time I would:**
 - Add optimistic UI updates on block edit (instead of waiting for the API round-trip)
-- Add a `valid_from` column and last-row-wins deduplication logic to the seed
 - Add an undo/reset button to revert a block to industry default from the UI (currently requires clearing the supplier field to blank)
+- Make `seed.py` idempotent — currently it re-inserts all data on every run, which would fail with unique constraint violations against a non-empty database. A guard checking `Component.query.count() > 0` before inserting would prevent accidental re-seeding of a live database
+- Add frontend tests (Jest + React Testing Library) covering the search filter, block edit dialog, and table expansion
 
 ---
 
