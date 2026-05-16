@@ -42,7 +42,8 @@ npm run dev
 ## Tests
 
 ```bash
-make test
+make test           # backend
+make test-frontend  # frontend
 ```
 
 Runs the backend pytest suite (27 tests) against an in-memory SQLite database — no Supabase connection required. Coverage:
@@ -53,6 +54,8 @@ Runs the backend pytest suite (27 tests) against an in-memory SQLite database �
 **Why SQLite in-memory for tests:** A separate test database would require a second Supabase project or a local Postgres instance, adding setup burden for anyone running the tests. SQLite in-memory requires no infrastructure, runs fast, and is fully isolated — nothing written during tests persists or touches the real database. The tradeoff is that SQLite is not identical to Postgres (looser typing, some constraint differences), so Postgres-specific bugs could slip through. For this app the risk is low: there are no Postgres-specific queries or types in use, and the logic being tested is Python arithmetic rather than database behavior.
 
 `DATABASE_URL` is set to the SQLite URL at the top of `conftest.py` before any app imports, ensuring `load_dotenv` cannot override it with the real Supabase URL.
+
+The frontend suite (Jest + React Testing Library) covers `EditBlockDialog` — the core interactive component: rendering the industry default as read-only, pre-filling the supplier value, saving with a value or null, error state on API failure, disabled state while saving, cancel, and backdrop click.
 
 ---
 
