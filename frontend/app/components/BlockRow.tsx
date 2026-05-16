@@ -13,16 +13,18 @@ const BlockRow = ({ block, onBlockUpdated }: Props) => {
   const [editing, setEditing] = useState(false);
   const [current, setCurrent] = useState(block);
 
-  function handleSaved(updated: BlockSummary, newFootprint: number) {
+  const handleSaved = (updated: BlockSummary, newFootprint: number) => {
     setCurrent(updated);
     setEditing(false);
     onBlockUpdated(updated, newFootprint);
-  }
+  };
 
   return (
     <>
       <tr className="bg-brand-surface border-t border-gray-100">
-        <td className="pl-24 py-2 text-sm text-brand-dark">{current.block_name}</td>
+        <td className="pl-24 py-2 text-sm text-brand-dark">
+          {current.block_name}
+        </td>
         <td />
         <td className="py-2 text-sm text-right font-mono text-brand-dark">
           {current.active_co2e.toFixed(2)}
