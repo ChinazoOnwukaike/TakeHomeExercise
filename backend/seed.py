@@ -32,6 +32,10 @@ def to_int100(value: str) -> int:
 def seed():
     app = create_app()
     with app.app_context():
+        if Component.query.count() > 0:
+            print("Database already seeded, skipping.")
+            return
+
         components_csv = load_csv("components.csv")
         materials_csv = load_csv("component_materials.csv")
         blocks_csv = load_csv("blocks.csv")
