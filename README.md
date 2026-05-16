@@ -105,7 +105,6 @@ Schema changes are managed through Alembic migrations via Flask-Migrate rather t
 - Switch the `materials` and `blocks` SQLAlchemy relationships to `selectinload` (eager loading) to prevent N+1 queries as the dataset grows — currently `GET /api/components/<id>` fires one query per material to fetch its blocks
 - Add optimistic UI updates on block edit (instead of waiting for the API round-trip)
 - Add an undo/reset button to revert a block to industry default from the UI (currently requires clearing the supplier field to blank)
-- Make `seed.py` idempotent — currently it re-inserts all data on every run, which would fail with unique constraint violations against a non-empty database. A guard checking `Component.query.count() > 0` before inserting would prevent accidental re-seeding of a live database
 - Add frontend tests (Jest + React Testing Library) covering the search filter, block row rendering, and table expansion
 
 ---
