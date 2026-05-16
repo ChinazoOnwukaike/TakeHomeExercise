@@ -37,6 +37,36 @@ npm run dev
 
 > **Port conflicts:** `make dev` will fail if ports 3000 or 5000 are already in use. Run `lsof -ti:3000 | xargs kill -9` or `lsof -ti:5000 | xargs kill -9` to free them before retrying.
 
+> **OS:** These commands assume macOS or Linux.
+
+<details>
+<summary>Windows instructions (WSL)</summary>
+
+The Makefile and shell commands use Unix paths and tools. On Windows, the easiest path is WSL (Windows Subsystem for Linux):
+
+1. Install WSL: `wsl --install` in PowerShell, then restart
+2. Open a WSL terminal and clone the repo there
+3. Follow the standard setup instructions above — they work as-is inside WSL
+
+Alternatively, run the manual commands with Windows paths:
+
+```bat
+cd backend
+python -m venv venv
+venv\Scripts\pip install -r requirements.txt
+set FLASK_APP=run.py
+venv\Scripts\flask db upgrade
+venv\Scripts\python seed.py
+venv\Scripts\python run.py
+```
+
+```bat
+cd frontend
+npm install
+npm run dev
+```
+</details>
+
 ---
 
 ## Tests
